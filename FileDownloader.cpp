@@ -7,7 +7,8 @@
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
 
-namespace {
+namespace
+{
     QString getFilename(QNetworkReply *reply)
     {
         if (reply) {
