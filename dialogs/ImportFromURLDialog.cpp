@@ -15,20 +15,6 @@ ImportFromURLDialog::ImportFromURLDialog(QWidget *parent)
     createLayout();
 }
 
-bool ImportFromURLDialog::isDownloading() const
-{
-    return _isDownloading;
-}
-
-void ImportFromURLDialog::setIsDownloading(bool isDownloading)
-{
-    if (_isDownloading == isDownloading)
-        return;
-
-    _isDownloading = isDownloading;
-    emit isDownloadingChanged(_isDownloading);
-}
-
 void ImportFromURLDialog::createWidgets()
 {
     _urlEdit = new QLineEdit(this);
@@ -40,19 +26,12 @@ void ImportFromURLDialog::createWidgets()
 
     _progressBar = new QProgressBar(this);
 
-    connect(this, &ImportFromURLDialog::isDownloadingChanged, [this](bool isDownloading) {
-        if (isDownloading) {
-            _importButton->setText(tr("Cancel"));
-            _progressBar->reset();
-        } else {
-            _importButton->setText(tr("Import"));
-        }
-        _urlEdit->setDisabled(isDownloading);
-        _progressBar->setVisible(isDownloading);
-    });
-    setIsDownloading(false);
+    _fileDownloader = new FileDownloader("./temp_downloads", this);
+    connect(_fileDownloader, &FileDownloader::isDownloadingChanged, this, &ImportFromURLDialog::onIsDownloadingChanged);
+    connect(_fileDownloader, &FileDownloader::downloadProgress, this, &ImportFromURLDialog::onDownloadProgress);
+    connect(_fileDownloader, &FileDownloader::downloadFinished, this, &ImportFromURLDialog::onDownloadFinished);
 
-    _networkManager = new QNetworkAccessManager(this);
+    onIsDownloadingChanged(false);
 }
 
 void ImportFromURLDialog::createLayout()
@@ -69,21 +48,36 @@ void ImportFromURLDialog::createLayout()
     setMinimumWidth(500);
 }
 
+void ImportFromURLDialog::onIsDownloadingChanged(bool isDownloading)
+{
+    if (isDownloading) {
+        _importButton->setText(tr("Cancel"));
+        _progressBar->reset();
+    } else {
+        _importButton->setText(tr("Import"));
+    }
+    _urlEdit->setDisabled(isDownloading);
+    _progressBar->setVisible(isDownloading);
+}
+
+void ImportFromURLDialog::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
+{
+    _progressBar->setMaximum(100);
+    _progressBar->setValue(static_cast<double>(bytesReceived) / bytesTotal * 100);
+}
+
+void ImportFromURLDialog::onDownloadFinished(const QString &filepath, bool isAborted)
+{
+    if (!isAborted) {
+        qDebug() << filepath << isAborted;
+    }
+}
+
 void ImportFromURLDialog::onImport()
 {
-    if (!isDownloading()) {
-        setIsDownloading(true);
-        _currentReply = _networkManager->get(QNetworkRequest(_urlEdit->text()));
-
-        connect(_currentReply, &QNetworkReply::downloadProgress, [this](qint64 bytesReceived, qint64 totalBytes) {
-            _progressBar->setMaximum(100);
-            _progressBar->setValue(static_cast<double>(bytesReceived) / totalBytes * 100);
-        });
-        connect(_networkManager, &QNetworkAccessManager::finished, [this](QNetworkReply *reply) {
-            setIsDownloading(false);
-            reply->deleteLater();
-        });
+    if (!_fileDownloader->isDownloading()) {
+        _fileDownloader->downloadFile(_urlEdit->text());
     } else {
-        _currentReply->abort();
+        _fileDownloader->abortDownloading();
     }
 }
