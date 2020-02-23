@@ -14,30 +14,32 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    AvatarManager.cpp \
     Database.cpp \
     FileDownloader.cpp \
     FileImporter.cpp \
     MainWindow.cpp \
-    delegates/AccountListViewDelegate.cpp \
+    delegates/AccountListDelegate.cpp \
     dialogs/ImportFromFileDialog.cpp \
     dialogs/ImportFromURLDialog.cpp \
     main.cpp \
-    models/GroupTreeModel.cpp \
+    models/AccountListModel.cpp \
     widgets/FileImporterWidget.cpp
 
 HEADERS += \
+    AvatarManager.h \
     Database.h \
     FileDownloader.h \
     FileImporter.h \
     FileImporterWidget.h \
     MainWindow.h \
-    delegates/AccountListViewDelegate.h \
+    delegates/AccountListDelegate.h \
     dialogs/ImportFromFileDialog.h \
     dialogs/ImportFromURLDialog.h \
     models/Account.h \
+    models/AccountListModel.h \
     models/Group.h \
     models/GroupId.h \
-    models/GroupTreeModel.h \
     models/Sex.h \
     widgets/FileImporterWidget.h
 
