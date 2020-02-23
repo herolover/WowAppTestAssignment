@@ -1,6 +1,11 @@
 #pragma once
 
+#include "Database.h"
+#include "dialogs/ImportFromURLDialog.h"
+#include "dialogs/ImportFromFileDialog.h"
+
 #include <QMainWindow>
+#include <QTreeView>
 
 class MainWindow: public QMainWindow
 {
@@ -8,9 +13,15 @@ class MainWindow: public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
 
 private:
-    void importFromUrl();
-    void importFromFile();
+    void createWidgets();
+    void createLayout();
+
+    Database _db;
+
+    QTreeView *_accountsListView;
+
+    ImportFromURLDialog *_importFromURLDialog;
+    ImportFromFileDialog *_importFromFileDialog;
 };

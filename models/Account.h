@@ -16,5 +16,5 @@ struct Account
     QString language;
     qint64 birthday;
     GroupId groupId;
-    QString roasterId;
+    QString rosterId;
 };
