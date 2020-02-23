@@ -102,6 +102,8 @@ void FileImporter::importFile(const QString &filename)
             qint64 accountsProcessed = 0;
             qint64 accountsTotal = roster.size();
             qint64 accountsNew = 0;
+
+            _db.beginTransaction();
             for (auto &&item : roster) {
                 auto rosterObject = item.toObject();
                 auto group = convertGroup(rosterObject);
@@ -123,6 +125,7 @@ void FileImporter::importFile(const QString &filename)
                     return setImportStatus(ABORTED);
                 }
             }
+            _db.commitTransaction();
 
             setImportStatus(FINISHED);
         });

@@ -21,9 +21,34 @@ Database::Database(const QString &dbName, QObject *parent)
     createPreparedStatements();
     loadGroupCache();
 
+    _groupTable = new QSqlQueryModel(this);
+    QSqlQuery selectGroups(_db);
+    selectGroups.exec(R"(
+        SELECT `group_name`
+        FROM `groups`
+        ORDER BY `group_order`
+    )");
+    selectGroups.exec();
+    _groupTable->setQuery(selectGroups);
+
     _accountsModel = new QSqlTableModel(this, _db);
     _accountsModel->setTable("accounts");
     _accountsModel->select();
+}
+
+void Database::beginTransaction()
+{
+    _db.transaction();
+}
+
+void Database::commitTransaction()
+{
+    _db.commit();
+}
+
+void Database::rollbackTransaction()
+{
+    _db.rollback();
 }
 
 GroupId Database::addGroup(const Group &group)
@@ -43,7 +68,7 @@ GroupId Database::addGroup(const Group &group)
     }
 }
 
-void Database::addAccount(const Account &account)
+bool Database::addAccount(const Account &account)
 {
     _insertAccountQuery->bindValue(":id", account.id);
     _insertAccountQuery->bindValue(":username", account.username);
@@ -54,10 +79,41 @@ void Database::addAccount(const Account &account)
     _insertAccountQuery->bindValue(":language", account.language);
     _insertAccountQuery->bindValue(":birthday", account.birthday);
     _insertAccountQuery->bindValue(":group_id", account.groupId);
-    _insertAccountQuery->bindValue(":roaster_id", account.roasterId);
+    _insertAccountQuery->bindValue(":roster_id", account.rosterId);
     if (!_insertAccountQuery->exec()) {
         qCritical() << _insertAccountQuery->lastError().text();
+
+        return false;
+    } else {
+        return true;
     }
+}
+
+QSqlQueryModel *Database::createAccountModel(GroupId groupId)
+{
+    QSqlQuery selectAccounts(_db);
+    selectAccounts.prepare(R"(
+        SELECT `id`, `username`, `first_name`
+        FROM `accounts`
+        WHERE `group_id` = ?
+    )");
+    selectAccounts.bindValue(0, groupId);
+    selectAccounts.exec();
+
+    auto model = new QSqlQueryModel(this);
+    model->setQuery(selectAccounts);
+
+    return model;
+}
+
+QVector<QAbstractItemModel *> Database::createAccountModelList()
+{
+    QVector<QAbstractItemModel *> modelList;
+    for (auto groupIt = _groupCache.begin(); groupIt != _groupCache.end(); ++groupIt) {
+        modelList.append(createAccountModel(groupIt.value()));
+    }
+
+    return modelList;
 }
 
 void Database::loadGroupCache()
@@ -95,7 +151,7 @@ void Database::createDatabaseScheme()
             `language` TEXT NOT NULL,
             `birthday` INTEGER NOT NULL,
             `group_id` INTEGER NOT NULL,
-            `roaster_id` TEXT NOT NULL,
+            `roster_id` TEXT NOT NULL,
 
             FOREIGN KEY (`group_id`) REFERENCES `groups`(`group_id`)
         )
@@ -116,13 +172,13 @@ void Database::createPreparedStatements()
 
     _insertAccountQuery = new QSqlQuery(_db);
     _insertAccountQuery->prepare(R"(
-        INSERT OR IGNORE INTO `accounts`
+        INSERT INTO `accounts`
         (
-            `id`, `username`, `first_name`, `last_name`, `sex`, `country`, `language`, `birthday`, `group_id`, `roaster_id`
+            `id`, `username`, `first_name`, `last_name`, `sex`, `country`, `language`, `birthday`, `group_id`, `roster_id`
         )
         VALUES
         (
-            :id, :username, :first_name, :last_name, :sex, :country, :language, :birthday, :group_id, :roaster_id
+            :id, :username, :first_name, :last_name, :sex, :country, :language, :birthday, :group_id, :roster_id
         )
     )");
 }
