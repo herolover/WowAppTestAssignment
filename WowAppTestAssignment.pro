@@ -1,4 +1,4 @@
-QT += core gui widgets network
+QT += core gui widgets network sql concurrent
 
 CONFIG += c++17
 
@@ -14,15 +14,30 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    Database.cpp \
     FileDownloader.cpp \
+    FileImporter.cpp \
     MainWindow.cpp \
+    delegates/AccountListViewDelegate.cpp \
     dialogs/ImportFromURLDialog.cpp \
-    main.cpp
+    main.cpp \
+    models/GroupTreeModel.cpp \
+    widgets/FileImporterWidget.cpp
 
 HEADERS += \
+    Database.h \
     FileDownloader.h \
+    FileImporter.h \
+    FileImporterWidget.h \
     MainWindow.h \
-    dialogs/ImportFromURLDialog.h
+    delegates/AccountListViewDelegate.h \
+    dialogs/ImportFromURLDialog.h \
+    models/Account.h \
+    models/Group.h \
+    models/GroupId.h \
+    models/GroupTreeModel.h \
+    models/Sex.h \
+    widgets/FileImporterWidget.h
 
 FORMS +=
 

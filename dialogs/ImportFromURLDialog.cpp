@@ -1,15 +1,16 @@
 #include "ImportFromURLDialog.h"
 
-#include <QHBoxLayout>
-#include <QVBoxLayout>
+#include <QGridLayout>
 #include <QDebug>
 
-ImportFromURLDialog::ImportFromURLDialog(QWidget *parent)
+ImportFromURLDialog::ImportFromURLDialog(Database &db, QWidget *parent)
     : QDialog(parent)
 {
     setModal(true);
     setWindowTitle(tr("Import From URL"));
-    setAttribute(Qt::WA_DeleteOnClose);
+
+    _fileImporterWidget = new FileImporterWidget(db, this);
+    _fileImporterWidget->hide();
 
     createWidgets();
     createLayout();
@@ -22,8 +23,15 @@ void ImportFromURLDialog::createWidgets()
     _urlEdit->setText("https://file.wowapp.me/owncloud/index.php/s/sGOXibS0ZSspQE8/download");
 
     _importButton = new QPushButton(tr("Import"), this);
-    connect(_importButton, &QPushButton::clicked, this, &ImportFromURLDialog::onImport);
+    connect(_importButton, &QPushButton::clicked, [this]() {
+        if (!_fileDownloader->isDownloading()) {
+            _fileDownloader->downloadFile(_urlEdit->text());
+        } else {
+            _fileDownloader->abortDownloading();
+        }
+    });
 
+    _downloadingLabel = new QLabel(tr("Downloading"), this);
     _progressBar = new QProgressBar(this);
 
     _fileDownloader = new FileDownloader("./temp_downloads", this);
@@ -36,13 +44,12 @@ void ImportFromURLDialog::createWidgets()
 
 void ImportFromURLDialog::createLayout()
 {
-    auto *urlLayout = new QHBoxLayout();
-    urlLayout->addWidget(_urlEdit);
-    urlLayout->addWidget(_importButton);
-
-    auto *mainLayout = new QVBoxLayout();
-    mainLayout->addLayout(urlLayout);
-    mainLayout->addWidget(_progressBar);
+    auto *mainLayout = new QGridLayout();
+    mainLayout->addWidget(_urlEdit, 0, 0);
+    mainLayout->addWidget(_importButton, 0, 1);
+    mainLayout->addWidget(_downloadingLabel, 1, 0, 1, 2, Qt::AlignHCenter);
+    mainLayout->addWidget(_progressBar, 2, 0, 1, 2);
+    mainLayout->addWidget(_fileImporterWidget, 3, 0, 1, 2);
 
     setLayout(mainLayout);
     setMinimumWidth(500);
@@ -53,10 +60,12 @@ void ImportFromURLDialog::onIsDownloadingChanged(bool isDownloading)
     if (isDownloading) {
         _importButton->setText(tr("Cancel"));
         _progressBar->reset();
+        _fileImporterWidget->hide();
     } else {
         _importButton->setText(tr("Import"));
     }
     _urlEdit->setDisabled(isDownloading);
+    _downloadingLabel->setVisible(isDownloading);
     _progressBar->setVisible(isDownloading);
 }
 
@@ -70,14 +79,8 @@ void ImportFromURLDialog::onDownloadFinished(const QString &filepath, bool isAbo
 {
     if (!isAborted) {
         qDebug() << filepath << isAborted;
-    }
-}
 
-void ImportFromURLDialog::onImport()
-{
-    if (!_fileDownloader->isDownloading()) {
-        _fileDownloader->downloadFile(_urlEdit->text());
-    } else {
-        _fileDownloader->abortDownloading();
+        _fileImporterWidget->show();
+        _fileImporterWidget->importFromFile(filepath);
     }
 }
