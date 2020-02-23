@@ -32,10 +32,10 @@ AvatarManager::AvatarManager(const QString &avatarDirectory, qint32 avatarSize)
     _avatarDirectory = dir.absoluteFilePath(avatarDirectory);
 }
 
-QImage AvatarManager::getAccountAvatar(const QString &accountId, const QString &firstName, const QString &lastName, Sex sex)
+QImage AvatarManager::getAccountAvatar(const QString &firstName, const QString &lastName, Sex sex)
 {
     QDir dir(_avatarDirectory);
-    auto filename = makeFilename(accountId);
+    auto filename = makeFilename(firstName, lastName, sex);
     if (dir.exists(filename)) {
         return QImage(dir.absoluteFilePath(filename));
     } else {
@@ -45,9 +45,10 @@ QImage AvatarManager::getAccountAvatar(const QString &accountId, const QString &
     }
 }
 
-QString AvatarManager::makeFilename(const QString &accountId)
+QString AvatarManager::makeFilename(const QString &firstName, const QString &lastName, Sex sex)
 {
-    return accountId + ".png";
+    return QString("%1%2%3.png").arg(firstName.size() > 0 ? firstName.front().toUpper() : ' ',
+                                     lastName.size() > 0 ? lastName.front().toUpper() : ' ').arg(static_cast<int>(sex));
 }
 
 QImage AvatarManager::createAvatar(const QString &firstName, const QString &lastName, Sex sex)
