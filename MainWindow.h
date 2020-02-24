@@ -1,11 +1,12 @@
 #pragma once
 
+#include "AvatarManager.h"
 #include "Database.h"
-#include "dialogs/ImportFromURLDialog.h"
 #include "dialogs/ImportFromFileDialog.h"
+#include "dialogs/ImportFromURLDialog.h"
+#include "widgets/GroupAccountTreeViewWidget.h"
 
 #include <QMainWindow>
-#include <QTreeView>
 
 class MainWindow: public QMainWindow
 {
@@ -16,11 +17,13 @@ public:
 
 private:
     void createWidgets();
-    void createLayout();
 
     Database _db;
 
-    QTreeView *_accountsListView;
+    AvatarManager _avatarManager32;
+    AvatarManager _avatarManager128;
+
+    GroupAccountTreeViewWidget *_groupAccountTreeViewWidget;
 
     ImportFromURLDialog *_importFromURLDialog;
     ImportFromFileDialog *_importFromFileDialog;

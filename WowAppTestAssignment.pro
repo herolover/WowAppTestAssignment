@@ -19,12 +19,14 @@ SOURCES += \
     FileDownloader.cpp \
     FileImporter.cpp \
     MainWindow.cpp \
-    delegates/AccountListDelegate.cpp \
+    delegates/GroupAccountTreeViewDelegate.cpp \
     dialogs/ImportFromFileDialog.cpp \
     dialogs/ImportFromURLDialog.cpp \
     main.cpp \
     models/AccountListModel.cpp \
-    widgets/FileImporterWidget.cpp
+    models/GroupAccountTreeModel.cpp \
+    widgets/FileImporterWidget.cpp \
+    widgets/GroupAccountTreeViewWidget.cpp
 
 HEADERS += \
     AvatarManager.h \
@@ -33,15 +35,17 @@ HEADERS += \
     FileImporter.h \
     FileImporterWidget.h \
     MainWindow.h \
-    delegates/AccountListDelegate.h \
+    delegates/GroupAccountTreeViewDelegate.h \
     dialogs/ImportFromFileDialog.h \
     dialogs/ImportFromURLDialog.h \
     models/Account.h \
     models/AccountListModel.h \
     models/Group.h \
+    models/GroupAccountTreeModel.h \
     models/GroupId.h \
     models/Sex.h \
-    widgets/FileImporterWidget.h
+    widgets/FileImporterWidget.h \
+    widgets/GroupAccountTreeViewWidget.h
 
 FORMS +=
 

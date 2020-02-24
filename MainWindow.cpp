@@ -1,7 +1,8 @@
 #include "MainWindow.h"
 
+#include "delegates/GroupAccountTreeViewDelegate.h"
 #include "dialogs/ImportFromURLDialog.h"
-#include "models/GroupTreeModel.h"
+#include "models/GroupAccountTreeModel.h"
 
 #include <QMenuBar>
 #include <QVBoxLayout>
@@ -9,6 +10,8 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , _db("WowAppTestAssignment.db")
+    , _avatarManager32("avatars/32", 32)
+    , _avatarManager128("avatars/128", 128)
 {
     auto *importMenu = menuBar()->addMenu(tr("Import"));
     auto *fromUrl = importMenu->addAction(tr("From URL"));
@@ -22,32 +25,17 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     createWidgets();
-    createLayout();
 }
 
 void MainWindow::createWidgets()
 {
-    auto *model = new GroupTreeModel();
-    model->_groupModel = _db._groupTable;
-    model->_accountModel = _db.createAccountModelList();
-
-    _accountsListView = new QTreeView(this);
-    _accountsListView->setModel(model);
-
-    setCentralWidget(_accountsListView);
+    _groupAccountTreeViewWidget = new GroupAccountTreeViewWidget(new GroupAccountTreeViewDelegate(_avatarManager32, this),
+                                                                 new GroupAccountTreeModel(_db, this),
+                                                                 this);
+    setCentralWidget(_groupAccountTreeViewWidget);
 
     _importFromURLDialog = new ImportFromURLDialog(_db, this);
     _importFromFileDialog = new ImportFromFileDialog(_db, this);
 
-//    _a = new QTableView(this);
-//    _a->setModel(_db._accountsModel);
-}
-
-void MainWindow::createLayout()
-{
-//    auto *mainLayout = new QVBoxLayout(this);
-//    mainLayout->addWidget(_accountsListView);
-//    mainLayout->addWidget(_a);
-
-//    setLayout(mainLayout);
+    resize(450, 600);
 }

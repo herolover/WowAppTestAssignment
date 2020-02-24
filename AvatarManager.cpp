@@ -64,13 +64,12 @@ QImage AvatarManager::createAvatar(const QString &firstName, const QString &last
     painter.drawEllipse(rect);
 
     QFont font("Tahoma");
-    font.setPixelSize(_avatarSize * 0.6);
-    font.setCapitalization(QFont::AllUppercase);
+    font.setPixelSize(_avatarSize * 0.5);
     painter.setFont(font);
     painter.setPen(QPen(QColorConstants::DarkGray));
     painter.drawText(rect, Qt::AlignCenter,
-                     QString("%1%2").arg(firstName.size() > 0 ? firstName.front() : ' ',
-                                         lastName.size() > 0 ? lastName.front() : ' '));
+                     QString("%1%2").arg(firstName.size() > 0 ? firstName.front().toUpper() : ' ',
+                                         lastName.size() > 0 ? lastName.front().toUpper() : ' '));
 
     return avatar;
 }

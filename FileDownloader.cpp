@@ -45,6 +45,11 @@ FileDownloader::FileDownloader(const QString &downloadDirectory, QObject *parent
     _networkManager = new QNetworkAccessManager(this);
 }
 
+FileDownloader::~FileDownloader()
+{
+    abortDownloading();
+}
+
 bool FileDownloader::isDownloading() const
 {
     return _isDownloading;

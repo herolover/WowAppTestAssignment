@@ -1,6 +1,7 @@
 #pragma once
 
 #include "models/Account.h"
+#include "models/AccountListModel.h"
 #include "models/Group.h"
 
 #include <QSqlDatabase>
@@ -16,27 +17,38 @@ class Database: public QObject
 public:
     Database(const QString &dbName, QObject *parent = nullptr);
 
-    void beginTransaction();
-    void commitTransaction();
-    void rollbackTransaction();
+    class AddGroupAccountGuard
+    {
+    public:
+        AddGroupAccountGuard(Database &parent, QSqlDatabase &db);
+        AddGroupAccountGuard(AddGroupAccountGuard &&) = default;
+        ~AddGroupAccountGuard();
 
-    GroupId addGroup(const Group &group);
-    bool addAccount(const Account &account);
+        GroupId addGroup(const Group &group);
+        bool addAccount(const Account &account);
 
-    QSqlQueryModel *_groupTable;
-    QSqlTableModel *_accountsModel;
+    private:
+        void loadGroupCache();
 
-    QSqlQueryModel *createAccountModel(GroupId groupId);
-    QVector<QAbstractItemModel *> createAccountModelList();
+        Database &_parent;
+        QSqlDatabase &_db;
+        QSqlQuery *_insertGroupQuery;
+        QSqlQuery *_insertAccountQuery;
+
+        QMap<QString, GroupId> _groupCache;
+    };
+
+    AddGroupAccountGuard makeAddGroupAccountGuard();
+
+    QSqlQueryModel *createGroupListModel();
+    AccountListModel *createAccountListModel(GroupId groupId);
+    QVector<AccountListModel *> createAccountListModelList(QSqlQueryModel *groupModel);
+
+signals:
+    void groupAccountUpdated();
 
 private:
-    void loadGroupCache();
     void createDatabaseScheme();
-    void createPreparedStatements();
 
     QSqlDatabase _db;
-    QSqlQuery *_insertGroupQuery;
-    QSqlQuery *_insertAccountQuery;
-
-    QMap<QString, GroupId> _groupCache;
 };

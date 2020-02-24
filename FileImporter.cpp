@@ -103,16 +103,16 @@ void FileImporter::importFile(const QString &filename)
             qint64 accountsTotal = roster.size();
             qint64 accountsNew = 0;
 
-            _db.beginTransaction();
+            auto guard = _db.makeAddGroupAccountGuard();
             for (auto &&item : roster) {
                 auto rosterObject = item.toObject();
                 auto group = convertGroup(rosterObject);
-                auto groupId = _db.addGroup(group);
+                auto groupId = guard.addGroup(group);
 
                 auto accountObject = rosterObject["account"].toObject();
                 auto account = convertAccount(rosterObject, accountObject);
                 account.groupId = groupId;
-                if (_db.addAccount(account)) {
+                if (guard.addAccount(account)) {
                     ++accountsNew;
                 }
                 ++accountsProcessed;
@@ -125,7 +125,6 @@ void FileImporter::importFile(const QString &filename)
                     return setImportStatus(ABORTED);
                 }
             }
-            _db.commitTransaction();
 
             setImportStatus(FINISHED);
         });

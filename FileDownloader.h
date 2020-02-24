@@ -13,6 +13,7 @@ class FileDownloader: public QObject
     Q_PROPERTY(bool isDownloading READ isDownloading NOTIFY isDownloadingChanged)
 public:
     FileDownloader(const QString &downloadDirectory = "temp_downloads", QObject *parent = nullptr);
+    ~FileDownloader();
 
     bool isDownloading() const;
 
