@@ -7,4 +7,5 @@
 * Saving accounts into SQlite3 DB
 * Parsing JSON and adding to DB in background thread
 * Checking account duplicates
-* Generating avatars lazily(by demand) and store them on a disk in ./avatars
+* Lazy generating avatars and store them on a disk in ./avatars
+* Lazy loading accounts in the main list
