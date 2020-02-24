@@ -54,6 +54,8 @@ QString AvatarManager::makeFilename(const QString &firstName, const QString &las
 QImage AvatarManager::createAvatar(const QString &firstName, const QString &lastName, Sex sex)
 {
     QImage avatar(_avatarSize, _avatarSize, QImage::Format_ARGB32_Premultiplied);
+    avatar.fill(QColorConstants::Transparent);
+
     QPainter painter(&avatar);
     painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
 
