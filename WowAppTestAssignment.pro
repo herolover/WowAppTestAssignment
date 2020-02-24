@@ -20,6 +20,7 @@ SOURCES += \
     FileImporter.cpp \
     MainWindow.cpp \
     delegates/GroupAccountTreeViewDelegate.cpp \
+    dialogs/AccountDetailDialog.cpp \
     dialogs/ImportFromFileDialog.cpp \
     dialogs/ImportFromURLDialog.cpp \
     main.cpp \
@@ -36,6 +37,7 @@ HEADERS += \
     FileImporterWidget.h \
     MainWindow.h \
     delegates/GroupAccountTreeViewDelegate.h \
+    dialogs/AccountDetailDialog.h \
     dialogs/ImportFromFileDialog.h \
     dialogs/ImportFromURLDialog.h \
     models/Account.h \

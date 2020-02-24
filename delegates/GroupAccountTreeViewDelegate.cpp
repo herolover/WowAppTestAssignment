@@ -37,3 +37,12 @@ QSize GroupAccountTreeViewDelegate::sizeHint(const QStyleOptionViewItem &option,
 
     return QSize(100, 36);
 }
+
+bool GroupAccountTreeViewDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    if (index.parent().isValid()) {
+        emit detailInfoRequested(index);
+    }
+
+    return false;
+}

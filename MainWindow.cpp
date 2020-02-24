@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 
 #include "delegates/GroupAccountTreeViewDelegate.h"
+#include "dialogs/AccountDetailDialog.h"
 #include "dialogs/ImportFromURLDialog.h"
 #include "models/GroupAccountTreeModel.h"
 
@@ -29,13 +30,19 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::createWidgets()
 {
-    _groupAccountTreeViewWidget = new GroupAccountTreeViewWidget(new GroupAccountTreeViewDelegate(_avatarManager32, this),
+    auto *delegate = new GroupAccountTreeViewDelegate(_avatarManager32, this);
+    _groupAccountTreeViewWidget = new GroupAccountTreeViewWidget(delegate,
                                                                  new GroupAccountTreeModel(_db, this),
                                                                  this);
     setCentralWidget(_groupAccountTreeViewWidget);
 
     _importFromURLDialog = new ImportFromURLDialog(_db, this);
     _importFromFileDialog = new ImportFromFileDialog(_db, this);
+
+    connect(delegate, &GroupAccountTreeViewDelegate::detailInfoRequested, [this](QModelIndex index) {
+        auto *detailDialog = new AccountDetailDialog(index, _avatarManager128, this);
+        detailDialog->show();
+    });
 
     resize(450, 600);
 }

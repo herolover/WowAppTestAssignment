@@ -44,7 +44,7 @@ AccountListModel *Database::createAccountListModel(GroupId groupId)
 {
     QSqlQuery selectAccounts(_db);
     selectAccounts.prepare(R"(
-        SELECT `id`, `first_name`, `last_name`, `sex`
+        SELECT `username`, `first_name`, `last_name`, `sex`, `country`, `language`, `birthday`
         FROM `accounts`
         WHERE `group_id` = :group_id
         AND
