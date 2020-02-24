@@ -44,7 +44,7 @@ void AccountDetailDialog::createWidgets(QModelIndex index)
 
     auto avatarLabel = new QLabel(this);
     avatarLabel->setPixmap(QPixmap::fromImage(avatarImage));
-    layout->addWidget(avatarLabel, 0, 1, 1, 2);
+    layout->addWidget(avatarLabel, 0, 0, 1, 2, Qt::AlignHCenter);
 
     layout->addWidget(new QLabel(tr("Username")), 1, 0);
     layout->addWidget(new QLabel(username), 1, 1);
