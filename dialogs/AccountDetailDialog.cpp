@@ -18,7 +18,7 @@ namespace
     }
 }
 
-AccountDetailDialog::AccountDetailDialog(QModelIndex index, AvatarManager &avatarManager, QWidget *parent)
+AccountDetailDialog::AccountDetailDialog(const QModelIndex &index, AvatarManager &avatarManager, QWidget *parent)
     : QDialog(parent)
     , _avatarManager(avatarManager)
 {
@@ -29,7 +29,7 @@ AccountDetailDialog::AccountDetailDialog(QModelIndex index, AvatarManager &avata
     setAttribute(Qt::WA_DeleteOnClose);
 }
 
-void AccountDetailDialog::createWidgets(QModelIndex index)
+void AccountDetailDialog::createWidgets(const QModelIndex &index)
 {
     auto username = index.siblingAtColumn(0).data().toString();
     auto firstName = index.siblingAtColumn(1).data().toString();

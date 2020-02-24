@@ -14,6 +14,7 @@ public:
     GroupAccountTreeViewWidget(GroupAccountTreeViewDelegate *delegate, GroupAccountTreeModel *model, QWidget *parent = nullptr);
 
 signals:
+    void treeItemDoubleClicked(const QModelIndex &index);
 
 private:
     void createWidgets(GroupAccountTreeViewDelegate *delegate, GroupAccountTreeModel *model);

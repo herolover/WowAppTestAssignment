@@ -19,11 +19,14 @@ void GroupAccountTreeViewWidget::createWidgets(GroupAccountTreeViewDelegate *del
     _groupAccountTreeView->setModel(model);
     _groupAccountTreeView->setItemDelegate(delegate);
 
-    connect(_filterEdit, &QLineEdit::returnPressed, [this, model]() {
-        _filterEdit->selectAll();
-        model->setLikeFilter(_filterEdit->text());
+    connect(_filterEdit, &QLineEdit::textChanged, [this, model](const QString &text) {
+        model->setLikeFilter(text);
         _groupAccountTreeView->expandAll();
     });
+    connect(_filterEdit, &QLineEdit::returnPressed, [this]() {
+        _filterEdit->selectAll();
+    });
+    connect(_groupAccountTreeView, &QTreeView::doubleClicked, this, &GroupAccountTreeViewWidget::treeItemDoubleClicked);
 }
 
 void GroupAccountTreeViewWidget::createLayout()

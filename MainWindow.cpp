@@ -30,8 +30,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::createWidgets()
 {
-    auto *delegate = new GroupAccountTreeViewDelegate(_avatarManager32, this);
-    _groupAccountTreeViewWidget = new GroupAccountTreeViewWidget(delegate,
+    _groupAccountTreeViewWidget = new GroupAccountTreeViewWidget(new GroupAccountTreeViewDelegate(_avatarManager32, this),
                                                                  new GroupAccountTreeModel(_db, this),
                                                                  this);
     setCentralWidget(_groupAccountTreeViewWidget);
@@ -39,9 +38,11 @@ void MainWindow::createWidgets()
     _importFromURLDialog = new ImportFromURLDialog(_db, this);
     _importFromFileDialog = new ImportFromFileDialog(_db, this);
 
-    connect(delegate, &GroupAccountTreeViewDelegate::detailInfoRequested, [this](QModelIndex index) {
-        auto *detailDialog = new AccountDetailDialog(index, _avatarManager128, this);
-        detailDialog->show();
+    connect(_groupAccountTreeViewWidget, &GroupAccountTreeViewWidget::treeItemDoubleClicked, [this](const QModelIndex &index) {
+        if (index.parent().isValid()) {
+            auto *detailDialog = new AccountDetailDialog(index, _avatarManager128, this);
+            detailDialog->show();
+        }
     });
 
     resize(450, 600);

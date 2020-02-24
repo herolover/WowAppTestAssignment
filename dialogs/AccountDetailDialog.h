@@ -9,10 +9,10 @@
 class AccountDetailDialog: public QDialog
 {
 public:
-    AccountDetailDialog(QModelIndex index, AvatarManager &avatarManager, QWidget *parent = nullptr);
+    AccountDetailDialog(const QModelIndex &index, AvatarManager &avatarManager, QWidget *parent = nullptr);
 
 private:
-    void createWidgets(QModelIndex index);
+    void createWidgets(const QModelIndex &index);
 
     AvatarManager &_avatarManager;
 };
