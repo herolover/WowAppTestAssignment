@@ -7,4 +7,4 @@
 * Saving accounts into SQlite3 DB
 * Parsing JSON and adding to DB in background thread
 * Checking account duplicates
-* Generated avatars are stored on a disk in ./avatars
+* Generating avatars lazily(by demand) and store them on a disk in ./avatars
