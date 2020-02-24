@@ -26,9 +26,11 @@ void GroupAccountTreeModel::setLikeFilter(const QString &likeFilter)
 void GroupAccountTreeModel::resetModel()
 {
     beginResetModel();
-    delete _groupModel;
     for (auto &accountModel : _accountModel) {
         delete accountModel;
+    }
+    if (_groupModel) {
+        delete _groupModel;
     }
     _groupModel = _db.createGroupListModel();
     _accountModel = _db.createAccountListModelList(_groupModel);

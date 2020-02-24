@@ -165,6 +165,9 @@ Database::AddGroupAccountGuard::~AddGroupAccountGuard()
 {
     _db.commit();
     emit _parent.groupAccountUpdated();
+
+    delete _insertAccountQuery;
+    delete _insertGroupQuery;
 }
 
 GroupId Database::AddGroupAccountGuard::addGroup(const Group &group)
