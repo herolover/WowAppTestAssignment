@@ -6,6 +6,7 @@
 #include <QSqlError>
 #include <QSqlRecord>
 #include <QStringList>
+#include <QSqlDriver>
 
 Database::Database(const QString &dbName, QObject *parent)
     : QObject(parent)
@@ -40,8 +41,22 @@ QSqlQueryModel *Database::createGroupListModel()
     return model;
 }
 
-AccountListModel *Database::createAccountListModel(GroupId groupId)
+AccountListModel * Database::createAccountListModel(GroupId groupId)
 {
+    QSqlQuery selectAccountSize(_db);
+    selectAccountSize.prepare(R"(
+        SELECT COUNT(*)
+        FROM `accounts`
+        WHERE `group_id` = :group_id
+        AND
+        (
+            `first_name` LIKE :like_filter
+            OR `last_name` LIKE :like_filter
+        )
+    )");
+    selectAccountSize.bindValue(":group_id", groupId);
+    selectAccountSize.bindValue(":like_filter", "%");
+
     QSqlQuery selectAccounts(_db);
     selectAccounts.prepare(R"(
         SELECT `username`, `first_name`, `last_name`, `sex`, `country`, `language`, `birthday`
@@ -60,13 +75,17 @@ AccountListModel *Database::createAccountListModel(GroupId groupId)
 
     auto model = new AccountListModel();
     model->setQuery(selectAccounts);
+    model->setSizeQuery(selectAccountSize);
 
     connect(model, &AccountListModel::likeFilterChanged, [model](QString likeFilter) {
         auto query = model->query();
         query.bindValue(":like_filter", "%" + likeFilter + "%");
         query.exec();
-
         model->setQuery(query);
+
+        auto sizeQuery = model->sizeQuery();
+        sizeQuery.bindValue(":like_filter", "%" + likeFilter + "%");
+        model->setSizeQuery(sizeQuery);
     });
 
     return model;

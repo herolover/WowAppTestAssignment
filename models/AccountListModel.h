@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QSqlQueryModel>
+#include <QSqlQuery>
 
 class AccountListModel: public QSqlQueryModel
 {
@@ -11,6 +12,10 @@ class AccountListModel: public QSqlQueryModel
 public:
     AccountListModel(QObject *parent = nullptr);
 
+    qint64 totalSize() const;
+    QSqlQuery sizeQuery() const;
+    void setSizeQuery(QSqlQuery sizeQuery);
+
     QString likeFilter() const;
     void setLikeFilter(const QString &likeFilter);
 
@@ -18,5 +23,7 @@ signals:
     void likeFilterChanged(QString likeFilter);
 
 private:
+    QSqlQuery _sizeQuery;
+    qint64 _totalSize;
     QString _likeFilter;
 };
