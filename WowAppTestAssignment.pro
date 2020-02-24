@@ -34,7 +34,6 @@ HEADERS += \
     Database.h \
     FileDownloader.h \
     FileImporter.h \
-    FileImporterWidget.h \
     MainWindow.h \
     delegates/GroupAccountTreeViewDelegate.h \
     dialogs/AccountDetailDialog.h \

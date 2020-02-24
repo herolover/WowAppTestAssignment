@@ -12,7 +12,7 @@ namespace
             return "Male";
         case Sex::FEMALE:
             return "Female";
-        case Sex::UNKNOWN:
+        default:
             return "Unknown";
         }
     }

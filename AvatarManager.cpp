@@ -16,7 +16,7 @@ namespace
             return QColor::fromRgb(0xB5E6FF);
         case Sex::FEMALE:
             return QColor::fromRgb(0xFCD0FC);
-        case Sex::UNKNOWN:
+        default:
             return QColor::fromRgb(0xE1E8ED);
         }
     }

@@ -72,6 +72,8 @@ int GroupAccountTreeModel::rowCount(const QModelIndex &index) const
 
 int GroupAccountTreeModel::columnCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent)
+
     return 1;
 }
 
