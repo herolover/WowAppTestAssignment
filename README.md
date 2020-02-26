@@ -9,3 +9,6 @@
 * Checking account duplicates
 * Lazy generating avatars and storing them on a disk in ./avatars
 * Lazy loading accounts in the main list
+
+# Notes
+* OpenSSL 1.1 is required. Copy DLLs from the Qt supply(Qt\Tools\OpenSSL\*\bin)
