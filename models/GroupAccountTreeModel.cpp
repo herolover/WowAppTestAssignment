@@ -84,18 +84,6 @@ QVariant GroupAccountTreeModel::data(const QModelIndex &index, int role) const
     if (!index.parent().isValid()) {
         return _groupModel->data(index, role);
     } else if (!index.parent().parent().isValid()) {
-        auto model = _accountModel[index.parent().row()];
-        auto lastRowCount = model->rowCount();
-        auto k = index.row() / static_cast<double>(lastRowCount);
-        if (k > 0.9 && model->canFetchMore()) {
-            model->fetchMore();
-
-            // sorry for this hack
-            auto nonConstThis = const_cast<GroupAccountTreeModel *>(this);
-            nonConstThis->beginInsertRows(index.parent(), lastRowCount, model->rowCount());
-            nonConstThis->endInsertRows();
-        }
-
         return _accountModel[index.parent().row()]->data(index, role);
     } else {
         return "";
